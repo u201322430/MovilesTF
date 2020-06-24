@@ -1,7 +1,11 @@
 Game = function(game){}
 
 Game.prototype = {
+	init: function(level) {
+		this.currentLevel = level || "firstLevel"
+	},
 	create:function(){
+		this.loadLevel();
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
 	    this.scale.pageAlignHorizontally = true;
 	    this.scale.pageAlignVertically = true;
@@ -34,5 +38,11 @@ Game.prototype = {
 		//tercera forma
 		//let platform = new Phaser.Sprite(this,element.x,element.y,"platform");
 		//this.platforms.add(platform);
+	},
+	loadLevel: function() {
+		this.map = this.game.add.tilemap(this.currentLevel)
+		this.map.addTilesetImage("mapTileSheet","mapTileSheet")
+		this.backgroundLayer = this.map.createLayer("fondo")
+		this.collisionLayer = this.map.createLayer("plataformas")
 	}
 }
