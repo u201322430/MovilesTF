@@ -1,13 +1,22 @@
 Game = function(game){}
 
 Game.prototype = {
-	init:function(level){
+	init: function(level) {
 		this.physics.startSystem(Phaser.Physics.ARCADE);
-		this.currentLevel = level || "level0";
+		this.currentLevel = level || "firstLevel"
 		this.worldHeight = 3000;
 		this.game.world.setBounds(0, 0, 800, this.worldHeight);
 	},
 	create:function(){
+		this.loadLevel();
+		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
+	    this.scale.pageAlignHorizontally = true;
+	    this.scale.pageAlignVertically = true;
+
+		/*this.levelData = JSON.parse(this.cache.getText("level"));
+		console.log(this.levelData.platformData);
+		this.platforms = this.game.add.group();
+		this.levelData.platformData.forEach(this.createPlatform,this);*/
 
 		this.createBackground(this.worldHeight);
 
@@ -106,5 +115,11 @@ Game.prototype = {
 		console.log("RECOGIO BASURA")
 		trash.kill();
 		this.trashRecovered+=1;
+	},
+	loadLevel: function() {
+		this.map = this.game.add.tilemap(this.currentLevel)
+		this.map.addTilesetImage("mapTileSheet","mapTileSheet")
+		this.backgroundLayer = this.map.createLayer("fondo")
+		this.collisionLayer = this.map.createLayer("plataformas")
 	}
 }

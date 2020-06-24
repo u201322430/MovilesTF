@@ -19,6 +19,14 @@ Preload.prototype = {
 		this.load.image("plastic_bottle", "assets/images/plastic_bottle.png")
 		this.load.image("play_button", "assets/images/play_button.png")
 		this.load.image("tileset", "assets/images/tileset.png")
+		this.load.spritesheet("player", "assets/images/character_spritesheet.png",50,87);
+		this.laod.image("dead_fish", "assets/images/fish.png", 128,128);
+		this.laod.image("sand_wall", "assets/images/sand.png", 128,128);
+		this.laod.image("sand", "assets/images/sand", 128,128);
+		this.load.image("mapTileSheet", "assets/images/mapTileSheet.png");
+		this.load.tilemap("firstLevel", "assets/levels/firstLevel.json", null, Phaser.Tilemap.TILED_JSON);
+		this.load.tilemap("secondLevel", "assets/levels/secondLevel.json", null, Phaser.Tilemap.TILED_JSON);
+		this.load.tilemap("thirdLevel", "assets/levels/thirdLevel.json", null, Phaser.Tilemap.TILED_JSON);
 	},
 	create:function(){
 		this.state.start("Menu");
