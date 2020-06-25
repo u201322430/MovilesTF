@@ -29,13 +29,14 @@ Game.prototype = {
 	    this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	    this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
-		//Creación del grupo Peces Enemigos
+		//===== Creación del grupo Peces Enemigos =====
 		this.enemies = this.game.add.group();
 		this.enemies.enableBody = true;
 
 		this.enemyFrequency = 3 * 1000;
 		this.enemySpeed = 100;
-		this.elapsedTime = 0;
+		this.elapsedTimeEnemy = 0;
+		//=FIN= Creación del grupo Peces Enemigos =====
 
 		this.lives = 5;
 		this.maxSegRes = 30;		//Maximo segundos de respiración
@@ -43,18 +44,24 @@ Game.prototype = {
 		this.elapsedTimeOxygen = this.maxOxygen;
 		//=FIN= Creación del personaje =====
 
-		//===== Barras delOxygen =====
-		this.x = 750;
-	    this.y = 10;
-	    this.w = 20;
-	    this.h = this.elapsedTimeOxygen / (this.maxSegRes);
-	    this.r = 10;
+		//===== Barras del Oxygen =====
+		this.BO = {	x:750,
+					y:10,
+					w:20,
+					h:this.elapsedTimeOxygen / (this.maxSegRes),
+					r:10}
 		this.contorn = this.game.add.graphics(0,0);
 		this.oxygenBar = this.game.add.graphics(0,0);
-		//=FIN= Barras delOxygen =====
+		//=FIN= Barras del Oxygen =====
 
-	    
+	    //===== Creación del grupo Trash =====
+		//this.trashes = this.game.add.group();
+		//this.trashes.enableBody = true;
+		//=FIN= Creación del grupo Trash =====
 
+		//Info de la cantidad de Oxygen
+		this.oxygenText = this.game.add.text(0,0,'Oxygen :'+this.elapsedTimeOxygen + '/' + this.maxOxygen);
+		this.oxygenText.fill = "#FFFFFF";
 	},
 	update:function(){
 		//===== Colisiones =====
@@ -82,9 +89,9 @@ Game.prototype = {
 	    //=FIN= MOVIMIENTO PLAYER =====
 	    
 	    //===== Aparición de Enemies =====
-	    this.elapsedTime += this.time.elapsed;
-		if(this.elapsedTime >= this.enemyFrequency){
-			this.elapsedTime = 0;
+	    this.elapsedTimeEnemy += this.time.elapsed;
+		if(this.elapsedTimeEnemy >= this.enemyFrequency){
+			this.elapsedTimeEnemy = 0;
 			this.createEnemy();
 		}
 		//=FIN= Aparición de Peces =====
@@ -112,14 +119,17 @@ Game.prototype = {
 	},
 	drawOxygenBar:function(){
 		/*
-	    this.contorn.beginFill(0xff5500);    
-	    this.contorn.drawRoundedRect(this.x-5,this.y-5,this.w+10,1010,this.r); // coordenada X, coordenada Y, ancho, alto y radio
+	    this.contorn.beginFill(0xff5500);
+	    this.contorn.drawRoundedRect(this.BO.x-5,this.BO.y-5,this.BO.w+10,1010,this.BO.r); // coordenada X, coordenada Y, ancho, alto y radio
 	    this.contorn.endFill();
 
 	    this.oxygenBar.beginFill(0xf0f0f0);
-	    this.oxygenBar.drawRoundedRect(this.x,this.y,this.w,this.h,this.r); // coordenada X, coordenada Y, ancho, alto y radio
+	    this.oxygenBar.drawRoundedRect(this.BO.x,this.BO.y,this.BO.w,this.BO.h,this.BO.r); // coordenada X, coordenada Y, ancho, alto y radio
 	    this.oxygenBar.endFill();
 		*/
+
+		this.oxygenText.text = 'Oxygen :'+this.elapsedTimeOxygen + '/' + this.maxOxygen;
+
 	},
 
 	collisionFish:function(sprite1,sprite2){
