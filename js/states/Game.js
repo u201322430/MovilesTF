@@ -1,38 +1,110 @@
 Game = function(game){}
 
 Game.prototype = {
-	create:function(){
-		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
-	    this.scale.pageAlignHorizontally = true;
-	    this.scale.pageAlignVertically = true;
-
-		/*this.levelData = JSON.parse(this.cache.getText("level"));
-		console.log(this.levelData.platformData);
-		this.platforms = this.game.add.group();
-		this.levelData.platformData.forEach(this.createPlatform,this);*/
-
-						//===== BACKGROUND =====
-		/*this.background = this.game.add.tileSprite(0,0,this.game.width,
-													this.game.height,'bakground');
-		this.background.autoScroll(-100,0);*/
-
-		this.gravity = 100;
-		this.position = {x:this.game.world.centerX, y:50}
-		this.jumpForce = -20;
+	init:function(level){
 		this.physics.startSystem(Phaser.Physics.ARCADE);
+		this.currentLevel = level || "level0";
+		this.worldHeight = 3000;
+		this.game.world.setBounds(0, 0, 800, this.worldHeight);
+	},
+	create:function(){
+
+		this.createBackground(this.worldHeight);
+
+		this.acceleration = {x: 0, y: 0};
+		this.accelerationSpeed = 8;
+		this.decelerationSpeed = 4;
+		this.maxAcceleration = 400;
+		this.gravity = 100;
+
+		this.position = {x: this.game.world.centerX, y: 50};
+		this.jumpForce = -20;		
 
 		this.player = new Player(this.game,this.position,this.gravity);
-	},
-	createPlatform:function(element){
-		//primera forma
-		//let platform = this.game.add.sprite(element.x,element.y,"platform");
-		//this.platforms.add(platform);
-		
-		//segunda forma
-		//this.platforms.create(element.x,element.y,"platform");
 
-		//tercera forma
-		//let platform = new Phaser.Sprite(this,element.x,element.y,"platform");
-		//this.platforms.add(platform);
+		this.trashRecovered = 0;
+
+		this.trashGroup = this.game.add.group()
+
+		this.test = new Trash(this.game, {x: 400, y:700});
+		this.trashGroup.add(this.test);
+
+	},
+	update:function(){
+
+		this.game.physics.arcade.overlap(this.player,this.trashGroup,this.pickUpTrash,null,this);
+
+		this.decelerate();
+		
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)){			
+			this.acceleration.x -= this.accelerationSpeed
+			if(this.acceleration.x <= -1 * this.maxAcceleration){
+				this.acceleration.x = -1* this.maxAcceleration;
+			}						
+		}
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.D)){
+        	this.acceleration.x += this.accelerationSpeed
+			if(this.acceleration.x >= this.maxAcceleration){
+				this.acceleration.x = this.maxAcceleration;
+			}	
+		}
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.W)){			
+			this.acceleration.y -= this.accelerationSpeed
+			if(this.acceleration.y <= -1 * this.maxAcceleration){
+				this.acceleration.y = -1* this.maxAcceleration;
+			}						
+		}
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.S)){
+        	this.acceleration.y += this.accelerationSpeed
+			if(this.acceleration.y >= this.maxAcceleration){
+				this.acceleration.y = this.maxAcceleration;
+			}	
+		}
+
+		this.player.changeVelocity(this.acceleration)
+		
+	},
+	decelerate:function(){
+		if(this.acceleration.x > 0){
+			this.acceleration.x -= this.decelerationSpeed;
+		}
+		if(this.acceleration.x < 0){
+			this.acceleration.x += this.decelerationSpeed;
+		}
+		this.acceleration.y = 0;
+	},
+	createBackground:function(height){
+
+		let bottomBg = this.game.add.sprite(0,0,"bg_bottom")
+
+		bottomBg.y = height - bottomBg.height;
+
+		let graphics = this.game.add.graphics(0, 0);
+
+		//sky
+		graphics.beginFill(0xc2ecf5, 1);
+    	graphics.drawRect(0, 0, 800, 300);
+		graphics.endFill();
+		//foam
+		graphics.beginFill(0xffffff, 1);
+    	graphics.drawRect(0, 300, 800, 330);
+		graphics.endFill();
+		//water
+		graphics.beginFill(0x8ed6e7, 1);
+    	graphics.drawRect(0, 330, 800, height - bottomBg.height - 330);
+		graphics.endFill();
+
+		//this.map = this.game.add.tilemap(this.currentLevel);
+   		//this.map.addTilesetImage("tiles_spritesheet","gameTiles");
+    	//this.backgroundLayer = this.map.createLayer("bg_main");
+    	//this.collisionLayer = this.map.createLayer("collisionLayer");
+    	//this.map.setCollisionBetween(1,160,true,'collisionLayer');
+    	//this.collisionLayer.resizeWorld();
+
+	},
+	pickUpTrash:function(player,trash){
+		console.log("RECOGIO BASURA")
+		trash.kill();
+		this.trashRecovered+=1;
 	}
 }
