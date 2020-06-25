@@ -55,8 +55,33 @@ Game.prototype = {
 		//=FIN= Barras del Oxygen =====
 
 	    //===== Creación del grupo Trash =====
-		//this.trashes = this.game.add.group();
-		//this.trashes.enableBody = true;
+		this.trashes = this.game.add.group();
+		this.trashes.enableBody = true;
+		for(let i = 0;i < 5;i++){
+			let position = {x:this.game.rnd.integerInRange(20, 780),
+							y:this.game.rnd.integerInRange(200, 1200)};
+			console.log("x:"+position.x+" y:"+position.y);
+			let index = this.game.rnd.integerInRange(1, 7);
+			let trashSprite;
+			switch (index) {
+				case 1:
+					trashSprite = "aereosol";			break;
+				case 2:
+					trashSprite = "broken_cup";			break;
+				case 3:
+					trashSprite = "can";				break;
+				case 4:
+					trashSprite = "glass_bottle";		break;
+				case 5:
+					trashSprite = "milk_jug";			break;
+				case 6:
+					trashSprite = "pizza_carton";		break;
+				default:
+					trashSprite = "plastic_bottle";
+			}
+			let trash = new Trash(this.game,position,trashSprite);
+			this.trashes.add(trash);
+		}
 		//=FIN= Creación del grupo Trash =====
 
 		//Info de la cantidad de Oxygen
@@ -66,7 +91,7 @@ Game.prototype = {
 	update:function(){
 		//===== Colisiones =====
 		this.physics.arcade.overlap(this.player,this.enemies,null,this.collisionFish,this);
-		//this.physics.arcade.overlap(this.player,this.trash,null,this.checkCollision,this);
+		this.physics.arcade.overlap(this.player,this.trashes,null,this.collisionTrash,this);
 
 		//=FIN= Colisiones =====
 
@@ -140,6 +165,10 @@ Game.prototype = {
 			sprite1.kill();
 			console.log("Has muerto.");
 		}
+	},
+	collisionTrash:function(sprite1,sprite2){
+		console.log("+100 puntos");
+		sprite2.kill();
 	},
 	createEnemy:function(){
 
