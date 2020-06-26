@@ -9,14 +9,15 @@ Game.prototype = {
 	},
 	create:function(){
 		this.loadLevel();
-		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
-	    this.scale.pageAlignHorizontally = true;
-	    this.scale.pageAlignVertically = true;
+		this.createEnemies();
+		// this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
+	    // this.scale.pageAlignHorizontally = true;
+	    // this.scale.pageAlignVertically = true;
 
-		/*this.levelData = JSON.parse(this.cache.getText("level"));
-		console.log(this.levelData.platformData);
-		this.platforms = this.game.add.group();
-		this.levelData.platformData.forEach(this.createPlatform,this);*/
+		// /*this.levelData = JSON.parse(this.cache.getText("level"));
+		// console.log(this.levelData.platformData);
+		// this.platforms = this.game.add.group();
+		// this.levelData.platformData.forEach(this.createPlatform,this);*/
 
 		this.createBackground(this.worldHeight);
 
@@ -117,9 +118,29 @@ Game.prototype = {
 		this.trashRecovered+=1;
 	},
 	loadLevel: function() {
-		this.map = this.game.add.tilemap(this.currentLevel)
-		this.map.addTilesetImage("mapTileSheet","mapTileSheet")
-		this.backgroundLayer = this.map.createLayer("fondo")
-		this.collisionLayer = this.map.createLayer("plataformas")
+		this.map = this.game.add.tilemap(this.currentLevel);
+		this.map.addTilesetImage("maptiles","map_tiles");
+		this.backgroundLayer = this.map.createLayer("background");
+		this.collisionLayer = this.map.createLayer("collision");
+		this.collisionLayer.resizeWorld();
+	},
+	createEnemies: function() {
+		this.enemies = this.game.add.group();
+    let enemiesPos = this.findObjectsByType('enemy',this.map,"objects");
+    enemiesPos.forEach(function(element){
+		console.log('enemy')
+      	let enemy = new Enemy(this.game, element.x, element.y, 'fish', element.velocity, this.map);
+     	this.enemies.add(enemy);
+    },this);
+	},
+	findObjectsByType: function(targetType,tilemap,layer) {
+		let result = [];
+		tilemap.objects[layer].forEach(function(element) {
+		  if(element.properties.type == targetType) {
+			element.y -= tilemap.tileHeight;
+			result.push(element);
+		  }
+		}, this);
+		return result;
 	}
 }
