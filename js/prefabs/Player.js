@@ -12,6 +12,8 @@ Player = function(game,position,gravity){
 	this.body.collideWorldBounds = true
 	this.frame = 1;
 	this.game.add.existing(this);
+	this.invulnerableTime = 3;
+	this.isInvulnerable = false;
 	//this.keys = this.input.keyboard.createCursorKeys();	//crea solo teclas direc
 }
 
@@ -24,6 +26,17 @@ Player.prototype.pickUpTrash = function(trash){
 
 Player.prototype.damage = function(){
 	//TO-DO damage
+}
+
+Player.prototype.initInvulnerability = function(){
+	this.isInvulnerable = true;
+	let tween = this.game.add.tween(this).to( { alpha: 0 }, 250, "Linear", true, 0, -1);
+	tween.yoyo(true,0);
+	this.game.time.events.add(Phaser.Timer.SECOND * this.invulnerableTime, function(){
+		this.isInvulnerable = false;
+		this.alpha = 1; //mejor seguro, que no seguro.
+		tween.stop();
+	}, this);
 }
 
 Player.prototype.changeVelocity = function(force){

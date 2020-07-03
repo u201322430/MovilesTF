@@ -12,6 +12,9 @@ Game.prototype = {
 	},
 	create:function(){
 		
+		this.soundtrack = this.game.add.audio("soundtrack");
+        this.soundtrack.play();
+
 		this.createBackground(this.worldHeight);
 		this.loadLevel();
 		this.createEnemies();
@@ -28,6 +31,11 @@ Game.prototype = {
 		this.jumpForce = -20;		
 
 		this.player = new Player(this.game,this.position,this.gravity);
+		this.killedFish = 0;
+		this.killedFishGroup = this.game.add.group();
+		this.deadFishCounter = 0;
+		
+		this.initKilledFish();
 
 		this.trashRecovered = 0;
 		this.trashCounter = 0;
@@ -37,11 +45,21 @@ Game.prototype = {
 		// this.test = new Trash(this.game, {x: 400, y:700});
 		// this.trashGroup.add(this.test);
 
+		let style = {font : "40px Arial",fill: '#000000'};
+		this.scoreText = this.game.add.text(0,0,'Score: 0', style);
+		this.scoreText.x = this.game.world.width - 160;
+		this.scoreText.y = 40;
+		this.scoreText.anchor.setTo(0.5);
+		this.scoreText.fixedToCamera = true;
+
 	},
 	update:function(){
 		this.game.physics.arcade.collide(this.player,this.collisionLayer);
 		this.game.physics.arcade.overlap(this.player,this.garbages,this.pickUpTrash,null,this);
-		this.game.physics.arcade.collide(this.player,this.enemies,this.checkCollision,null,this);
+
+		if(this.player.isInvulnerable == false){
+			this.game.physics.arcade.overlap(this.player,this.enemies,this.fishCollision,null,this);
+		}		
 
 		this.decelerate();
 		
@@ -112,9 +130,7 @@ Game.prototype = {
 		graphics.endFill();
 
 	},
-	pickUpTrash:function(player,trash){
-		console.log(this.trashRecovered)
-		console.log(this.trashCounter)
+	pickUpTrash:function(player,trash){		
 		switch(trash.key) {
 			case "aereosol": {
 				this.score += 200;
@@ -148,6 +164,8 @@ Game.prototype = {
 		console.log(this.score)
 		trash.kill();
 		this.trashRecovered+=1;
+		console.log(this.score);
+		this.scoreText.text = 'Score: ' + this.score;
 	},
 	loadLevel: function() {
 		console.log("creating level");
@@ -189,8 +207,34 @@ Game.prototype = {
 		}, this);
 		return result;
 	},
-	checkCollision: function(player, enemy) {
-		console.log(enemy.body.touching);
-		this.game.state.restart();
+	fishCollision: function(player, fish) {
+		this.player.initInvulnerability();
+		fish.die();
+		this.killedFish++;
+		if(this.killedFish > 3){
+			//mueres
+		}
+		this.updateKilledFishes();
+		//this.game.state.restart();
+	},
+	initKilledFish: function(){
+		let maxFishes = 3;
+		for(let i = 0; i < maxFishes - this.killedFish; i++){
+			let fishHUD = this.add.sprite(10+i*100,0,"fish");
+			fishHUD.scale.setTo(1.6);
+			fishHUD.fixedToCamera = true;
+			this.killedFishGroup.add(fishHUD);
+		}
+	},
+	updateKilledFishes: function(){
+		this.deadFishCounter = 0;
+
+		this.killedFishGroup.forEach(function(item){
+			if(this.deadFishCounter<this.killedFish){
+				item.loadTexture('dead_fish');
+			}		
+			console.log(this.killedFish);
+			this.deadFishCounter++;
+		}, this);		
 	}
 }

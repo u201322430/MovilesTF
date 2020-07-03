@@ -9,6 +9,7 @@ Menu.prototype = {
 	},
 	create:function(){
 		let background = this.add.sprite(0,0,"bg_main_menu");
+		background.width = 896;
 
 		let title = this.add.text(0,0,'Speed Reciclaje: Legends',{
 			font : "66px Arial",
