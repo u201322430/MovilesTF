@@ -5,11 +5,11 @@ Game.prototype = {
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.currentLevel = level || "firstLevel"
 		this.worldHeight = 3000;
+		//setear el tamanio del mapa
 		this.game.world.setBounds(0, 0, 800, this.worldHeight);
 	},
 	create:function(){
-		this.loadLevel();
-		this.createEnemies();
+		
 		// this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
 	    // this.scale.pageAlignHorizontally = true;
 	    // this.scale.pageAlignVertically = true;
@@ -20,6 +20,8 @@ Game.prototype = {
 		// this.levelData.platformData.forEach(this.createPlatform,this);*/
 
 		this.createBackground(this.worldHeight);
+		this.loadLevel();
+		this.createEnemies();
 
 		this.acceleration = {x: 0, y: 0};
 		this.accelerationSpeed = 8;
@@ -41,8 +43,9 @@ Game.prototype = {
 
 	},
 	update:function(){
-
+		this.game.physics.arcade.collide(this.player,this.collisionLayer);
 		this.game.physics.arcade.overlap(this.player,this.trashGroup,this.pickUpTrash,null,this);
+		this.game.physics.arcade.collide(this.player,this.enemies,this.checkCollision,null,this);
 
 		this.decelerate();
 		
@@ -74,6 +77,11 @@ Game.prototype = {
 		this.player.changeVelocity(this.acceleration)
 		
 	},
+	createPlayer: function() {
+		let playerPost = this.findObjectsByType("player",this.map,"objectsLayer");
+		let pos = {x: playerPost[0].x, y: playerPost[0].y};
+		this.player = new Player(this.game,pos,this.gravity);
+	},
 	decelerate:function(){
 		if(this.acceleration.x > 0){
 			this.acceleration.x -= this.decelerationSpeed;
@@ -104,13 +112,6 @@ Game.prototype = {
     	graphics.drawRect(0, 330, 800, height - bottomBg.height - 330);
 		graphics.endFill();
 
-		//this.map = this.game.add.tilemap(this.currentLevel);
-   		//this.map.addTilesetImage("tiles_spritesheet","gameTiles");
-    	//this.backgroundLayer = this.map.createLayer("bg_main");
-    	//this.collisionLayer = this.map.createLayer("collisionLayer");
-    	//this.map.setCollisionBetween(1,160,true,'collisionLayer');
-    	//this.collisionLayer.resizeWorld();
-
 	},
 	pickUpTrash:function(player,trash){
 		console.log("RECOGIO BASURA")
@@ -119,9 +120,10 @@ Game.prototype = {
 	},
 	loadLevel: function() {
 		this.map = this.game.add.tilemap(this.currentLevel);
-		this.map.addTilesetImage("maptiles","map_tiles");
+		this.map.addTilesetImage("maptiles","mapTileSheet");
 		this.backgroundLayer = this.map.createLayer("background");
 		this.collisionLayer = this.map.createLayer("collision");
+		this.map.setCollisionBetween(1,126,true,'collision');
 		this.collisionLayer.resizeWorld();
 	},
 	createEnemies: function() {
@@ -142,5 +144,9 @@ Game.prototype = {
 		  }
 		}, this);
 		return result;
+	},
+	checkCollision: function(player, enemy) {
+		console.log(enemy.body.touching);
+		this.game.state.restart();
 	}
 }
