@@ -33,6 +33,9 @@ Preload.prototype = {
 		this.load.tilemap("firstLevel", "assets/levels/level1.json", null, Phaser.Tilemap.TILED_JSON);
 		this.load.tilemap("secondLevel", "assets/levels/secondLevel.json", null, Phaser.Tilemap.TILED_JSON);
 		this.load.tilemap("thirdLevel", "assets/levels/thirdLevel.json", null, Phaser.Tilemap.TILED_JSON);
+
+		this.load.audio("soundtrack", ["assets/sounds/soundtrack.mp3"]);
+
 	},
 	create:function(){
 		this.state.start("Menu");

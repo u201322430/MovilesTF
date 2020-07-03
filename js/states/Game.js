@@ -10,6 +10,9 @@ Game.prototype = {
 	},
 	create:function(){
 		
+		this.soundtrack = this.game.add.audio("soundtrack");
+        this.soundtrack.play();
+
 		this.createBackground(this.worldHeight);
 		this.loadLevel();
 		this.createEnemies();
@@ -38,6 +41,13 @@ Game.prototype = {
 
 		// this.test = new Trash(this.game, {x: 400, y:700});
 		// this.trashGroup.add(this.test);
+
+		let style = {font : "40px Arial",fill: '#000000'};
+		this.scoreText = this.game.add.text(0,0,'Score: 0', style);
+		this.scoreText.x = this.game.world.width - 160;
+		this.scoreText.y = 40;
+		this.scoreText.anchor.setTo(0.5);
+		this.scoreText.fixedToCamera = true;
 
 	},
 	update:function(){
@@ -114,8 +124,7 @@ Game.prototype = {
 		graphics.endFill();
 
 	},
-	pickUpTrash:function(player,trash){
-		console.log(trash.key);
+	pickUpTrash:function(player,trash){		
 		switch(trash.key) {
 			case "aereosol": {
 				this.score += 200;
@@ -141,6 +150,8 @@ Game.prototype = {
 		}
 		trash.kill();
 		this.trashRecovered+=1;
+		console.log(this.score);
+		this.scoreText.text = 'Score: ' + this.score;
 	},
 	loadLevel: function() {
 		this.map = this.game.add.tilemap(this.currentLevel);
