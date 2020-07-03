@@ -2,11 +2,13 @@ Game = function(game){}
 
 Game.prototype = {
 	init: function(level) {
+		console.log("new level");
+		console.log(level)
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.currentLevel = level || "firstLevel"
 		this.worldHeight = 3000;
 		//setear el tamanio del mapa
-		this.game.world.setBounds(0, 0, 800, this.worldHeight);
+		this.game.world.setBounds(0, 0, 896, this.worldHeight);
 	},
 	create:function(){
 		
@@ -28,6 +30,7 @@ Game.prototype = {
 		this.player = new Player(this.game,this.position,this.gravity);
 
 		this.trashRecovered = 0;
+		this.trashCounter = 0;
 
 		// this.trashGroup = this.game.add.group()
 
@@ -68,12 +71,15 @@ Game.prototype = {
 		}
 
 		this.player.changeVelocity(this.acceleration)
-		
+		if(this.trashRecovered == this.garbages.length) {
+			this.game.state.start("Game",true,false,"secondLevel");
+		}
 	},
 	createPlayer: function() {
 		let playerPost = this.findObjectsByType("player",this.map,"objectsLayer");
 		let pos = {x: playerPost[0].x, y: playerPost[0].y};
 		this.player = new Player(this.game,pos,this.gravity);
+		console.log("creating player");
 	},
 	decelerate:function(){
 		if(this.acceleration.x > 0){
@@ -94,57 +100,70 @@ Game.prototype = {
 
 		//sky
 		graphics.beginFill(0xc2ecf5, 1);
-    	graphics.drawRect(0, 0, 800, 300);
+    	graphics.drawRect(0, 0, 896, 300);
 		graphics.endFill();
 		//foam
 		graphics.beginFill(0xffffff, 1);
-    	graphics.drawRect(0, 300, 800, 330);
+    	graphics.drawRect(0, 300, 896, 330);
 		graphics.endFill();
 		//water
 		graphics.beginFill(0x8ed6e7, 1);
-    	graphics.drawRect(0, 330, 800, height - bottomBg.height - 330);
+    	graphics.drawRect(0, 330, 896, height - bottomBg.height - 330);
 		graphics.endFill();
 
 	},
 	pickUpTrash:function(player,trash){
-		console.log(trash.key);
+		console.log(this.trashRecovered)
+		console.log(this.trashCounter)
 		switch(trash.key) {
 			case "aereosol": {
 				this.score += 200;
+				break;
 			}
 			case "broken_cup": {
 				this.score += 100;
+				break;
 			}
 			case "can": {
 				this.score += 50;
+				break;
 			}
 			case "glass_bottle": {
-				this.score += 200;
+				this.score += 100;
+				break;
 			}
 			case "milk_jug": {
-				this.score += 200;
+				this.score += 100;
+				break;
 			}
 			case "pizza_carton": {
-				this.score += 200;
+				this.score += 50;
+				break;
 			}
 			case "plastic_bottle": {
-				this.score += 200;
+				this.score += 50;
+				break;
 			}
 		}
+		console.log(this.score)
 		trash.kill();
 		this.trashRecovered+=1;
 	},
 	loadLevel: function() {
+		console.log("creating level");
 		this.map = this.game.add.tilemap(this.currentLevel);
 		this.map.addTilesetImage("maptiles","mapTileSheet");
-		this.backgroundLayer = this.map.createLayer("background");
+		console.log(this.map);
+		// this.backgroundLayer = this.map.createLayer("background");
 		this.collisionLayer = this.map.createLayer("collision");
 		this.map.setCollisionBetween(1,126,true,'collision');
 		this.collisionLayer.resizeWorld();
+		
 	},
 	createEnemies: function() {
 		this.enemies = this.game.add.group();
 		let enemiesPos = this.findObjectsByType('enemy',this.map,"objects");
+		console.log("creating enemies")
 		enemiesPos.forEach(function(element){
 			console.log('enemy')
 			let enemy = new Enemy(this.game, element.x, element.y, 'fish', element.velocity, this.map);
