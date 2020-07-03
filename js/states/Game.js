@@ -28,9 +28,9 @@ Game.prototype = {
 		this.player = new Player(this.game,this.position,this.gravity);
 		this.killedFish = 0;
 		this.killedFishGroup = this.game.add.group();
+		this.deadFishCounter = 0;
 		
 		this.initKilledFish();
-		this.updateKilledFishes();
 
 		this.trashRecovered = 0;
 
@@ -43,7 +43,10 @@ Game.prototype = {
 	update:function(){
 		this.game.physics.arcade.collide(this.player,this.collisionLayer);
 		this.game.physics.arcade.overlap(this.player,this.garbages,this.pickUpTrash,null,this);
-		this.game.physics.arcade.collide(this.player,this.enemies,this.checkCollision,null,this);
+
+		if(this.player.isInvulnerable == false){
+			this.game.physics.arcade.overlap(this.player,this.enemies,this.fishCollision,null,this);
+		}		
 
 		this.decelerate();
 		
@@ -175,29 +178,34 @@ Game.prototype = {
 		}, this);
 		return result;
 	},
-	checkCollision: function(player, enemy) {
-		console.log(enemy.body.touching);
-		this.game.state.restart();
+	fishCollision: function(player, fish) {
+		this.player.initInvulnerability();
+		fish.die();
+		this.killedFish++;
+		if(this.killedFish > 3){
+			//mueres
+		}
+		this.updateKilledFishes();
+		//this.game.state.restart();
 	},
 	initKilledFish: function(){
 		let maxFishes = 3;
 		for(let i = 0; i < maxFishes - this.killedFish; i++){
 			let fishHUD = this.add.sprite(10+i*100,0,"fish");
 			fishHUD.scale.setTo(1.6);
+			fishHUD.fixedToCamera = true;
 			this.killedFishGroup.add(fishHUD);
 		}
 	},
 	updateKilledFishes: function(){
-
-		let deadFishCounter = 0;
+		this.deadFishCounter = 0;
 
 		this.killedFishGroup.forEach(function(item){
-			if(deadFishCounter>killedFish){
-				item.key = "dead_fish";
-			} else {
-				item.key = "fish";
-			}			
-			deadFishCounter++;
-		});		
+			if(this.deadFishCounter<this.killedFish){
+				item.loadTexture('dead_fish');
+			}		
+			console.log(this.killedFish);
+			this.deadFishCounter++;
+		}, this);		
 	}
 }
