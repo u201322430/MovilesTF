@@ -4,7 +4,7 @@ Trash = function(game,position){
     console.log(this.key)
     Phaser.Sprite.call(this,game,position.x,position.y,this.key);
     this.game.physics.arcade.enable(this);	
-    this.scale.setTo(0.3);
+    this.scale.setTo(0.4);
 	this.game = game;
     this.anchor.setTo(0.5);	
     this.game.add.existing(this);

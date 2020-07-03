@@ -10,24 +10,17 @@ Game.prototype = {
 	},
 	create:function(){
 		
-		// this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//escala a la pantalla que tengas
-	    // this.scale.pageAlignHorizontally = true;
-	    // this.scale.pageAlignVertically = true;
-
-		// /*this.levelData = JSON.parse(this.cache.getText("level"));
-		// console.log(this.levelData.platformData);
-		// this.platforms = this.game.add.group();
-		// this.levelData.platformData.forEach(this.createPlatform,this);*/
-
 		this.createBackground(this.worldHeight);
 		this.loadLevel();
 		this.createEnemies();
+		this.createTrash();
 
 		this.acceleration = {x: 0, y: 0};
 		this.accelerationSpeed = 8;
 		this.decelerationSpeed = 4;
 		this.maxAcceleration = 400;
 		this.gravity = 100;
+		this.score = 0
 
 		this.position = {x: this.game.world.centerX, y: 50};
 		this.jumpForce = -20;		
@@ -41,15 +34,15 @@ Game.prototype = {
 
 		this.trashRecovered = 0;
 
-		this.trashGroup = this.game.add.group()
+		// this.trashGroup = this.game.add.group()
 
-		this.test = new Trash(this.game, {x: 400, y:700});
-		this.trashGroup.add(this.test);
+		// this.test = new Trash(this.game, {x: 400, y:700});
+		// this.trashGroup.add(this.test);
 
 	},
 	update:function(){
 		this.game.physics.arcade.collide(this.player,this.collisionLayer);
-		this.game.physics.arcade.overlap(this.player,this.trashGroup,this.pickUpTrash,null,this);
+		this.game.physics.arcade.overlap(this.player,this.garbages,this.pickUpTrash,null,this);
 		this.game.physics.arcade.collide(this.player,this.enemies,this.checkCollision,null,this);
 
 		this.decelerate();
@@ -119,7 +112,30 @@ Game.prototype = {
 
 	},
 	pickUpTrash:function(player,trash){
-		console.log("RECOGIO BASURA")
+		console.log(trash.key);
+		switch(trash.key) {
+			case "aereosol": {
+				this.score += 200;
+			}
+			case "broken_cup": {
+				this.score += 100;
+			}
+			case "can": {
+				this.score += 50;
+			}
+			case "glass_bottle": {
+				this.score += 200;
+			}
+			case "milk_jug": {
+				this.score += 200;
+			}
+			case "pizza_carton": {
+				this.score += 200;
+			}
+			case "plastic_bottle": {
+				this.score += 200;
+			}
+		}
 		trash.kill();
 		this.trashRecovered+=1;
 	},
@@ -133,12 +149,21 @@ Game.prototype = {
 	},
 	createEnemies: function() {
 		this.enemies = this.game.add.group();
-    let enemiesPos = this.findObjectsByType('enemy',this.map,"objects");
-    enemiesPos.forEach(function(element){
-		console.log('enemy')
-      	let enemy = new Enemy(this.game, element.x, element.y, 'fish', element.velocity, this.map);
-     	this.enemies.add(enemy);
-    },this);
+		let enemiesPos = this.findObjectsByType('enemy',this.map,"objects");
+		enemiesPos.forEach(function(element){
+			console.log('enemy')
+			let enemy = new Enemy(this.game, element.x, element.y, 'fish', element.velocity, this.map);
+			this.enemies.add(enemy);
+		},this);
+	},
+	createTrash: function() {
+		this.garbages = this.game.add.group();
+		let trashPos = this.findObjectsByType('trash', this.map, "objects");
+		trashPos.forEach(function(element){
+			console.log('trash')
+			let trash = new Trash(this.game, {x: element.x, y: element.y});
+			this.garbages.add(trash);
+		},this);
 	},
 	findObjectsByType: function(targetType,tilemap,layer) {
 		let result = [];
