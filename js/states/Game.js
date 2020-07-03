@@ -33,6 +33,11 @@ Game.prototype = {
 		this.jumpForce = -20;		
 
 		this.player = new Player(this.game,this.position,this.gravity);
+		this.killedFish = 0;
+		this.killedFishGroup = this.game.add.group();
+		
+		this.initKilledFish();
+		this.updateKilledFishes();
 
 		this.trashRecovered = 0;
 
@@ -148,5 +153,26 @@ Game.prototype = {
 	checkCollision: function(player, enemy) {
 		console.log(enemy.body.touching);
 		this.game.state.restart();
+	},
+	initKilledFish: function(){
+		let maxFishes = 3;
+		for(let i = 0; i < maxFishes - this.killedFish; i++){
+			let fishHUD = this.add.sprite(10+i*100,0,"fish");
+			fishHUD.scale.setTo(1.6);
+			this.killedFishGroup.add(fishHUD);
+		}
+	},
+	updateKilledFishes: function(){
+
+		let deadFishCounter = 0;
+
+		this.killedFishGroup.forEach(function(item){
+			if(deadFishCounter>killedFish){
+				item.key = "dead_fish";
+			} else {
+				item.key = "fish";
+			}			
+			deadFishCounter++;
+		});		
 	}
 }

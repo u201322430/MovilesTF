@@ -29,6 +29,7 @@ Preload.prototype = {
 		this.load.image("mapTileSheet", "assets/images/fishTilesheet.png");
 
 		this.load.image("fish", "assets/images/fish.png");
+		this.load.image("dead_fish", "assets/images/dead_fish.png");
 		this.load.tilemap("firstLevel", "assets/levels/level1.json", null, Phaser.Tilemap.TILED_JSON);
 		this.load.tilemap("secondLevel", "assets/levels/secondLevel.json", null, Phaser.Tilemap.TILED_JSON);
 		this.load.tilemap("thirdLevel", "assets/levels/thirdLevel.json", null, Phaser.Tilemap.TILED_JSON);
