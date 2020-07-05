@@ -13,8 +13,10 @@ Game.prototype = {
 	create:function(){
 		
 		this.soundtrack = this.game.add.audio("soundtrack");
-        this.soundtrack.play();
-
+		if (this.currentLevel == "firstLevel") {
+			this.soundtrack.play();
+		}
+        
 		this.createBackground(this.worldHeight);
 		this.loadLevel();
 		this.createEnemies();
@@ -104,8 +106,16 @@ Game.prototype = {
 		}
 
 		this.player.changeVelocity(this.acceleration)
-		if(this.trashRecovered == this.garbages.length) {
-			this.game.state.start("Game",true,false,"secondLevel");
+		// this.garbages.length
+		if(this.trashRecovered == 2) {
+			if (this.currentLevel == 'secondLevel') {
+				this.game.state.start("Game",true,false,"thirdLevel");
+			} else if (this.currentLevwel == 'thirdLevel') {
+				this.game.state.start("YouWin", true, false, this.score)
+			} else {
+				this.game.state.start("Game",true,false,"secondLevel");
+			}
+			
 		}
 
 		this.player.breathe();
@@ -241,7 +251,8 @@ Game.prototype = {
 		fish.die();
 		this.killedFish++;
 		if(this.killedFish > 3){
-			//mueres
+			this.soundtrack.stop()
+			this.state.start('GameOver', true, false, this.score)
 		}
 		this.updateKilledFishes();
 		//this.game.state.restart();

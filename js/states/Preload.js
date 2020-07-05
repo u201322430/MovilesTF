@@ -22,9 +22,6 @@ Preload.prototype = {
 		this.load.image("play_button", "assets/images/play_button.png")
 		
 		this.load.spritesheet("player", "assets/images/character_spritesheet.png",50,87);
-		// this.laod.image("dead_fish", "assets/images/fish.png", 128,128);
-		// this.laod.image("sand_wall", "assets/images/sand.png", 128,128);
-		// this.laod.image("sand", "assets/images/sand", 128,128);
 		
 		this.load.image("mapTileSheet", "assets/images/fishTilesheet.png");
 
@@ -32,7 +29,7 @@ Preload.prototype = {
 		this.load.image("dead_fish", "assets/images/dead_fish.png");
 		this.load.tilemap("firstLevel", "assets/levels/level1.json", null, Phaser.Tilemap.TILED_JSON);
 		this.load.tilemap("secondLevel", "assets/levels/level2.json", null, Phaser.Tilemap.TILED_JSON);
-		this.load.tilemap("thirdLevel", "assets/levels/thirdLevel.json", null, Phaser.Tilemap.TILED_JSON);
+		this.load.tilemap("thirdLevel", "assets/levels/level3.json", null, Phaser.Tilemap.TILED_JSON);
 
 		this.load.audio("soundtrack", ["assets/sounds/soundtrack.mp3"]);
 
