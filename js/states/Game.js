@@ -107,7 +107,7 @@ Game.prototype = {
 
 		this.player.changeVelocity(this.acceleration)
 		// this.garbages.length
-		if(this.trashRecovered == 2) {
+		if(this.trashRecovered == this.garbages.length) {
 			if (this.currentLevel == 'secondLevel') {
 				this.game.state.start("Game",true,false,"thirdLevel");
 			} else if (this.currentLevwel == 'thirdLevel') {
