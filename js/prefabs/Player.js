@@ -14,6 +14,7 @@ Player = function(game,position,gravity){
 	this.game.add.existing(this);
 	this.invulnerableTime = 3;
 	this.isInvulnerable = false;
+	this.oxigenLevels = 100;
 	//this.keys = this.input.keyboard.createCursorKeys();	//crea solo teclas direc
 }
 
@@ -24,8 +25,20 @@ Player.prototype.pickUpTrash = function(trash){
 		
 }
 
-Player.prototype.damage = function(){
-	//TO-DO damage
+Player.prototype.breathe = function(){
+
+	if(this.oxigenLevels <= 0){
+		//pierde
+	}
+
+	if(this.y < 330){
+		if(this.oxigenLevels < 100){
+			this.oxigenLevels += 0.1;
+			console.log("CACA")
+		}		
+	}else{
+		this.oxigenLevels-=0.02;
+	}
 }
 
 Player.prototype.initInvulnerability = function(){

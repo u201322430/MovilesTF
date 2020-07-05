@@ -6,7 +6,7 @@ Game.prototype = {
 		console.log(level)
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.currentLevel = level || "firstLevel"
-		this.worldHeight = 3000;
+		this.worldHeight = 3840-64;
 		//setear el tamanio del mapa
 		this.game.world.setBounds(0, 0, 896, this.worldHeight);
 	},
@@ -45,12 +45,27 @@ Game.prototype = {
 		// this.test = new Trash(this.game, {x: 400, y:700});
 		// this.trashGroup.add(this.test);
 
-		let style = {font : "40px Arial",fill: '#000000'};
-		this.scoreText = this.game.add.text(0,0,'Score: 0', style);
+		this.scoreText = this.game.add.text(0,0,'Score: 0', {font : "40px Arial",fill: '#000000'});
 		this.scoreText.x = this.game.world.width - 160;
 		this.scoreText.y = 40;
 		this.scoreText.anchor.setTo(0.5);
 		this.scoreText.fixedToCamera = true;
+
+		let style = {font : "20px Arial",fill: '#000000'};
+		this.oxigenNumberText = this.game.add.text(0,0,'100%', style);
+		this.oxigenNumberText.x = this.game.world.width - 400;
+		this.oxigenNumberText.y = 50;
+		this.oxigenNumberText.anchor.setTo(0.5);
+		this.oxigenNumberText.fixedToCamera = true;
+
+		this.graphicsOxigenBar = this.game.add.graphics(0, 0);
+		this.graphicsOxigenBarContainer = this.game.add.graphics(0, 0);
+
+		this.graphicsOxigenBarContainer.beginFill(0x15363D, 1);
+		this.graphicsOxigenBarContainer.max = 300;
+    	this.graphicsOxigenBarContainer.drawRect(this.game.world.width - 550, 20, this.graphicsOxigenBarContainer.max, 55);
+		this.graphicsOxigenBarContainer.endFill();
+		this.graphicsOxigenBarContainer.fixedToCamera = true;
 
 	},
 	update:function(){
@@ -92,6 +107,11 @@ Game.prototype = {
 		if(this.trashRecovered == this.garbages.length) {
 			this.game.state.start("Game",true,false,"secondLevel");
 		}
+
+		this.player.breathe();
+		let oxigenText = this.player.oxigenLevels + "%"
+		this.oxigenNumberText.text = parseFloat(oxigenText).toFixed(2);
+		this.updateOxigenBar();
 	},
 	createPlayer: function() {
 		let playerPost = this.findObjectsByType("player",this.map,"objectsLayer");
@@ -108,11 +128,20 @@ Game.prototype = {
 		}
 		this.acceleration.y = 0;
 	},
+	updateOxigenBar:function(){
+		this.graphicsOxigenBar.clear();
+		this.graphicsOxigenBar.beginFill(0xA8EDFA, 1);
+		this.graphicsOxigenBar.max = 300;
+    	this.graphicsOxigenBar.drawRect(this.game.world.width - 550, 20, Math.round(this.graphicsOxigenBarContainer.max * this.player.oxigenLevels), 65);
+		this.graphicsOxigenBar.endFill();
+		this.graphicsOxigenBar.fixedToCamera = true;
+	},
 	createBackground:function(height){
 
 		let bottomBg = this.game.add.sprite(0,0,"bg_bottom")
 
 		bottomBg.y = height - bottomBg.height;
+		bottomBg.width = 896;
 
 		let graphics = this.game.add.graphics(0, 0);
 
