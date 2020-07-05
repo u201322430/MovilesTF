@@ -53,21 +53,22 @@ Game.prototype = {
 		this.scoreText.anchor.setTo(0.5);
 		this.scoreText.fixedToCamera = true;
 
+		this.graphicsOxigenBarContainer = this.game.add.graphics(0, 0);
+		this.graphicsOxigenBar = this.game.add.graphics(0, 0);
+		this.graphicsOxigenBar.fixedToCamera = true;
+
+		this.graphicsOxigenBarContainer.beginFill(0x15363D, 1);
+		this.graphicsOxigenBarContainer.max = 300;
+    	this.graphicsOxigenBarContainer.drawRect(this.game.world.width - 550, 20, this.graphicsOxigenBarContainer.max, 55);
+		this.graphicsOxigenBarContainer.endFill();
+		this.graphicsOxigenBarContainer.fixedToCamera = true;		
+
 		let style = {font : "20px Arial",fill: '#000000'};
 		this.oxigenNumberText = this.game.add.text(0,0,'100%', style);
 		this.oxigenNumberText.x = this.game.world.width - 400;
 		this.oxigenNumberText.y = 50;
 		this.oxigenNumberText.anchor.setTo(0.5);
 		this.oxigenNumberText.fixedToCamera = true;
-
-		this.graphicsOxigenBar = this.game.add.graphics(0, 0);
-		this.graphicsOxigenBarContainer = this.game.add.graphics(0, 0);
-
-		this.graphicsOxigenBarContainer.beginFill(0x15363D, 1);
-		this.graphicsOxigenBarContainer.max = 300;
-    	this.graphicsOxigenBarContainer.drawRect(this.game.world.width - 550, 20, this.graphicsOxigenBarContainer.max, 55);
-		this.graphicsOxigenBarContainer.endFill();
-		this.graphicsOxigenBarContainer.fixedToCamera = true;
 
 	},
 	update:function(){
@@ -118,7 +119,7 @@ Game.prototype = {
 			
 		}
 
-		this.player.breathe();
+		this.player.breathe(this.score);
 		let oxigenText = this.player.oxigenLevels + "%"
 		this.oxigenNumberText.text = parseFloat(oxigenText).toFixed(2);
 		this.updateOxigenBar();
@@ -142,9 +143,8 @@ Game.prototype = {
 		this.graphicsOxigenBar.clear();
 		this.graphicsOxigenBar.beginFill(0xA8EDFA, 1);
 		this.graphicsOxigenBar.max = 300;
-    	this.graphicsOxigenBar.drawRect(this.game.world.width - 550, 20, Math.round(this.graphicsOxigenBarContainer.max * this.player.oxigenLevels), 65);
+    	this.graphicsOxigenBar.drawRect(this.game.world.width - 550, 20, Math.round((this.graphicsOxigenBarContainer.max * this.player.oxigenLevels)/100), 55);
 		this.graphicsOxigenBar.endFill();
-		this.graphicsOxigenBar.fixedToCamera = true;
 	},
 	createBackground:function(height){
 

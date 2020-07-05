@@ -25,10 +25,10 @@ Player.prototype.pickUpTrash = function(trash){
 		
 }
 
-Player.prototype.breathe = function(){
+Player.prototype.breathe = function(score){
 
 	if(this.oxigenLevels <= 0){
-		//pierde
+		this.game.state.start('GameOver', true, false, score)
 	}
 
 	if(this.y < 330){
